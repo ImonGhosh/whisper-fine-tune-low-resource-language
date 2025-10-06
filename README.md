@@ -77,30 +77,60 @@ Use a GPU for training: torch.cuda.is_available() should be True.
 ## ▶️ Using the Fine-Tuned Model (Inference)
 
 ```bash
-import torch
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
-from peft import PeftModel
+# ----------- Load Audio File --------------
+AUDIO_FILE = "bengali-convo-2.wav"  # replace with your file
 
-lang = "bengali"
-base_id = "openai/whisper-small"
-adapter_id = "imonghose/whisper-small-bengali-lora-final"  # replace with your HF repo or local path
+# Preview audio
+ipd.Audio(AUDIO_FILE)
+
+# Load audio
+waveform, sr = torchaudio.load(AUDIO_FILE)
+waveform = waveform[0].numpy()  # mono
+resampled = librosa.resample(waveform, orig_sr=sr, target_sr=16000)
+sr = 16000  # Whisper expects 16kHz
+
+
+# -------------------Set model and tokenizer properties-----------------------------------
+
+model_name_or_path = "openai/whisper-small"
+language = "bengali"
+task = "transcribe"
+
+# -------------------Load Whisper tokenizer-----------------------------------
+
+from transformers import WhisperTokenizer
+tokenizer = WhisperTokenizer.from_pretrained(model_name_or_path,language=language,task=task)
+
+#---------------------------------Load LORA model from Hugging Face Hub-----------------------------------
+
+from peft import LoraConfig, PeftModel, LoraModel, LoraConfig, get_peft_model
+config = LoraConfig(r=32, lora_alpha=64, target_modules=["k_proj", "v_proj", "q_proj", "out_proj"], lora_dropout=0.05, bias="none")
+
+# Load base model
+base_model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-small")
+peft_model = get_peft_model(base_model, config)
+
+# Load LoRA adapter
+# Note : Replace our model with your own fine-tuned model if you use our CLI piepline to create one
+fine_tuned_model = PeftModel.from_pretrained(peft_model, "imonghose/whisper-small-bengali-lora-final")
+
+# Move model to GPU
+fine_tuned_model = fine_tuned_model.to("cuda")
+
+# ----------- Create Transciption from Audio using the fine-tuned whisper model --------------
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# 1) Processor
-processor = WhisperProcessor.from_pretrained(base_id, language=lang, task="transcribe")
-
-# 2) Base model + LoRA adapter
-base = WhisperForConditionalGeneration.from_pretrained(base_id)
-base = PeftModel.from_pretrained(base, adapter_id).to(device).eval()
-
-# 3) Transcribe (single audio)
-audio: float32 16kHz mono numpy array; use librosa.load(path, sr=16000)
-inputs = processor(audio, sampling_rate=16000, return_tensors="pt").input_features.to(device)
+processor = WhisperProcessor.from_pretrained(model_name_or_path, language=language, task=task)
+model = fine_tuned_model
+# Prepare input
+inputs = processor(resampled, sampling_rate=sr, return_tensors="pt").input_features.to(device)
+# Generate token ids
 with torch.no_grad():
-pred_ids = base.generate(inputs, max_new_tokens=128)
-text = processor.batch_decode(pred_ids, skip_special_tokens=True)[0]
-print(text)
+    op = model.generate(inputs, language='bengali', task='transcribe')
+transcription = tokenizer.batch_decode(op, skip_special_tokens=True)[0]
+print("Full Transcription:")
+print(transcription)
+
 ```
 
 ## 🔭 Future Scope
