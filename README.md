@@ -38,7 +38,7 @@
 
 ---
 
-## 🚀 Quickstart (Fine-tuning CLI Pipeline)
+## 🚀 Quickstart (Using our CLI Pipeline for fine-tuning any low resource language)
 **Requirements**
 ```bash
 # Create & activate env
