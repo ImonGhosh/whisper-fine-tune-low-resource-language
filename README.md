@@ -15,7 +15,7 @@
 **Date** : April, 2025.<br>
 **Authors** : Imon Kalyan Ghosh, Ishmita Basu, Bathula Veera Raghavulu<br>
 **Check out the paper here** : [Research Paper Link](paper/Research_Paper.pdf)<br>
-**Check out a short paper presentation here** : [Presentation Link](paper/Paper_Presentation.pdf)
+**Check out a short paper presentation here** : [Presentation Link](paper/Paper_Presentation.pptx)
 
 ---
 
