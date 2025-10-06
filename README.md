@@ -67,9 +67,9 @@ python lora_finetuning_pipeline.py \
   --test_frac 0.75
 ```
 
---dataset, --language, --username, --train_frac, --test_frac are fully customizable.
+--dataset, --language, --username, --output_dir, --train_frac, --test_frac are fully customizable.
 
-The fine-tuned model is saved under --output_dir and pushed to user's hugging face.
+Your custom fine-tuned model is pushed to your hugging face and saved under folder specified under --output_dir
 
 Use a GPU for training: torch.cuda.is_available() should be True.
 
