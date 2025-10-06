@@ -24,7 +24,7 @@
 - **Approach**: Parameter-efficient fine-tuning (PEFT) variants + clean ASR dataset
 - **Results**: **WER and transcription quality improved significantly** post FT; **LoRA > Adapters ≈ BitFit** in our setting.
 - **Scale/Cost**: Runs on a single GPU with PEFT (fast, memory-efficient); mixed precision; configurable train/test splits.
-- **Artifacts**: One-file CLI pipeline, HF-compatible checkpoints, example inference code.
+- **Artifacts**: One-file CLI pipeline, Fine-tuned model, example inference code.
 
 ---
 
