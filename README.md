@@ -1,10 +1,10 @@
-# Fine Tuning Whisper ASR Model on Low Resource Languages
+# Fine Tuning Whisper ASR Model on Low Resource Indian Languages (Bengali and Telugu)
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)]()
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-red.svg)]()
 [![HF Transformers](https://img.shields.io/badge/HuggingFace-Transformers-yellow.svg)]()
 
-- Practical, reproducible pipeline to fine-tune OpenAI Whisper for any **low-resource Indic languages**.
+- Practical, reproducible pipeline to fine-tune OpenAI Whisper for any **low-resource language**.
 - Demonstrates **significant WER reduction** and improved transcription quality **post fine-tuning** when fine-tuned for Bengali and Telugu.
 - Comparative study of **four PEFT methods**: **LoRA**, **LoRA + SpecAugment**, **BitFit**, and **Adapter Layers**.
 - **LoRA-based methods** achieve the **best WER** across both languages.
