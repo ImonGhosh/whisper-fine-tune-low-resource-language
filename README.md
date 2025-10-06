@@ -1,4 +1,4 @@
-# Fine Tuning Whisper ASR Model on Low Resource Indian Languages (Bengali and Telugu)
+# Fine Tuning Whisper ASR Model on Low Resource Languages
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)]()
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-red.svg)]()
