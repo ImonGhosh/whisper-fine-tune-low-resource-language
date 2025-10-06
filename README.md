@@ -1,24 +1,27 @@
-# Fine Tuning Whisper ASR Model on Low Resource Indian Language (Bengali and Telugu)
-
-## Research Paper<br>
-**Name** : BREAKING LANGUAGE BARRIERS: FINE-TUNING WHISPER FOR BENGALI AND TELUGU AUTOMATIC SPEECH RECOGNITION<br>
-**Date** : April, 2025.<br>
-**Authors** : Imon Kalyan Ghosh, Ishmita Basu, Bathula Veera Raghavulu<br>
-**Check out the paper here** : [Research Paper Link](paper/Research_Paper.pdf)
+# Fine Tuning Whisper ASR Model on Low Resource Indian Languages (Bengali and Telugu)
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)]()
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-red.svg)]()
 [![HF Transformers](https://img.shields.io/badge/HuggingFace-Transformers-yellow.svg)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)]()
 
-A practical, reproducible pipeline to fine-tune OpenAI Whisper on **low-resource Indic languages**.  
-We compare **LoRA**, **LoRA + SpecAugment**, **BitFit**, and **Adapter Layers** and show **LoRA-based methods yield the best WER** on Bengali and Telugu.
+- Practical, reproducible pipeline to fine-tune OpenAI Whisper for any **low-resource Indic languages**.
+- Demonstrates **significant WER reduction** and improved transcription quality **post fine-tuning** when fine-tuned for Bengali and Telugu.
+- Comparative study of **four PEFT methods**: **LoRA**, **LoRA + SpecAugment**, **BitFit**, and **Adapter Layers**.
+- **LoRA-based methods** achieve the **best WER** across both languages.
+- For theory, setup, datasets, and full results, see the **Research Paper** (information given below).
+
+## 📄Research Paper<br>
+**Name** : BREAKING LANGUAGE BARRIERS: FINE-TUNING WHISPER FOR BENGALI AND TELUGU AUTOMATIC SPEECH RECOGNITION<br>
+**Date** : April, 2025.<br>
+**Authors** : Imon Kalyan Ghosh, Ishmita Basu, Bathula Veera Raghavulu<br>
+**Check out the paper here** : [Research Paper Link](paper/Research_Paper.pdf)<br>
+**Check out a short paper presentation here** : [Research Paper Link](paper/Paper_Presentation.pdf)
 
 ---
 
 ## ✨ Highlights
-- **Problem**: Off-the-shelf Whisper underperforms on **Bengali**/**Telugu** due to limited labeled speech.
-- **Approach**: Parameter-efficient fine-tuning (PEFT) variants + clean training/eval pipeline.
+- **Problem**: Off-the-shelf Whisper underperforms on low resource languages like **Bengali**/**Telugu** due to limited labeled speech.
+- **Approach**: Parameter-efficient fine-tuning (PEFT) variants + clean ASR dataset
 - **Results**: **WER and transcription quality improved significantly** post FT; **LoRA > Adapters ≈ BitFit** in our setting.
 - **Scale/Cost**: Runs on a single GPU with PEFT (fast, memory-efficient); mixed precision; configurable train/test splits.
 - **Artifacts**: One-file CLI pipeline, HF-compatible checkpoints, example inference code.
@@ -71,7 +74,7 @@ The fine-tuned model is saved under --output_dir and pushed to user's hugging fa
 Use a GPU for training: torch.cuda.is_available() should be True.
 
 
-## Using the Fine-Tuned Model (Inference)
+## ▶️ Using the Fine-Tuned Model (Inference)
 
 ```bash
 import torch
@@ -100,3 +103,7 @@ text = processor.batch_decode(pred_ids, skip_special_tokens=True)[0]
 print(text)
 ```
 
+## 🔭 Future Scope
+- Replacing CLI pipeline with an easy-to-use public UI for fine tuning for any low resource language
+- Speech diarization on top of the fine-tuned models
+- Multimodal & real-time ASR extensions (streaming)
