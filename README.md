@@ -38,7 +38,7 @@
 
 ---
 
-## 🚀 Quickstart (Fine-tuning in One Command)
+## 🚀 Quickstart (Fine-tuning CLI Pipeline)
 **Requirements**
 ```bash
 # Create & activate env
