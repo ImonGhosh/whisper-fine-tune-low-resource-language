@@ -1,68 +1,57 @@
-# Fine Tuning Whisper ASR Model on Low Resource Indian Languages (Bengali and Telugu)
+# Fine-Tuning Whisper ASR Model for Low-Resource Languages
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue.svg)]()
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-red.svg)]()
 [![HF Transformers](https://img.shields.io/badge/HuggingFace-Transformers-yellow.svg)]()
 
-- Practical, reproducible pipeline to fine-tune OpenAI Whisper for any **low-resource language**.
-- Demonstrates **significant WER reduction** and improved transcription quality **post fine-tuning** when fine-tuned for Bengali and Telugu.
-- Comparative study of **four PEFT methods**: **LoRA**, **LoRA + SpecAugment**, **BitFit**, and **Adapter Layers**.
-- **LoRA-based methods** achieve the **best WER** across both languages.
-- For theory, setup, datasets, and full results, see the **Research Paper** (information given below).
+This repository presents a compact and reproducible framework for adapting OpenAI Whisper to low-resource automatic speech recognition (ASR) settings, with a focus on two major Indian Languages, namely Bengali and Telugu. The project studies parameter-efficient fine-tuning (PEFT) strategies on the Whisper Small model and provides training, evaluation, visualization, and inference artifacts in a structure intended for straightforward reuse.
 
-## 📄Research Paper<br>
-**Name** : BREAKING LANGUAGE BARRIERS: FINE-TUNING WHISPER FOR BENGALI AND TELUGU AUTOMATIC SPEECH RECOGNITION<br>
-**Date** : April, 2025.<br>
-**Authors** : Imon Kalyan Ghosh, Ishmita Basu, Bathula Veera Raghavulu<br>
-**Check out the paper here** : [Research Paper Link](paper/Research_Paper.pdf)<br>
-**Check out a short paper presentation here** : [Presentation Link](paper/Paper_Presentation.pptx)
+The accompanying study evaluates four adaptation settings: LoRA, LoRA with SpecAugment, BitFit, and Adapter Layers. Across the reported experiments, LoRA-based adaptation delivered the most reliable balance of word error rate (WER) reduction, training stability, and computational efficiency.
 
----
+## Research Paper
+**Title:** BREAKING LANGUAGE BARRIERS: FINE-TUNING WHISPER FOR BENGALI AND TELUGU AUTOMATIC SPEECH RECOGNITION  
+**Date:** April 2025  
+**Authors:** Imon Kalyan Ghosh, Ishmita Basu, Bathula Veera Raghavulu  
+**Paper:** [Research_Paper.pdf](paper/Research_Paper.pdf)  
+**Presentation:** [Paper_Presentation.pptx](paper/Paper_Presentation.pptx)
 
-## ✨ Highlights
-- **Problem**: Off-the-shelf Whisper underperforms on low resource languages like **Bengali**/**Telugu** due to limited labeled speech.
-- **Approach**: Parameter-efficient fine-tuning (PEFT) variants + clean ASR dataset
-- **Results**: **WER and transcription quality improved significantly** post FT; **LoRA > Adapters ≈ BitFit** in our setting.
-- **Scale/Cost**: Runs on a single GPU with PEFT (fast, memory-efficient); mixed precision; configurable train/test splits.
-- **Artifacts**: One-file CLI pipeline, Fine-tuned model, example inference code.
+## Project Scope
+- Fine-tuning Whisper Small for Bengali and Telugu ASR in low-resource conditions.
+- Comparative evaluation of PEFT methods using WER, runtime efficiency, and training dynamics.
+- Modular training pipeline for adapting Whisper to a custom dataset via a simple CLI interface.
+- Supplementary notebooks for visualization, qualitative inspection, and downstream speech diarization exploration.
 
----
+## Main Findings
+- Fine-tuning substantially improves performance over zero-shot Whisper on both target languages.
+- LoRA provides the strongest overall trade-off between accuracy, stability, and resource efficiency.
+- LoRA with SpecAugment yields marginal gains in some settings, particularly for Bengali, but introduces additional evaluation overhead.
+- BitFit is computationally lightweight but exhibits limited adaptation capacity.
+- Adapter Layers show less stable optimization behavior and weaker WER gains in this study.
 
-## ✨ Fine-tuning Workflow
-<img width="865" height="497" alt="image" src="https://github.com/user-attachments/assets/ae0efb67-4eb6-48e8-97ee-a10902b93936" />
+The paper further reports that the LoRA configuration achieved competitive adaptation while updating fewer than 3% of model parameters, making it particularly suitable for constrained training environments.
 
----
+## Fine-Tuning Workflow
+<img width="865" height="497" alt="Whisper fine-tuning workflow" src="https://github.com/user-attachments/assets/ae0efb67-4eb6-48e8-97ee-a10902b93936" />
 
-## 🧠 Methods Compared
-- **LoRA** (rank-limited adapters on attention/MLP)
-- **LoRA + SpecAugment** (time/freq masking for robustness)
-- **BitFit** (bias-only tuning)
-- **Adapter Layers** (bottleneck adapters inserted into blocks)
-- 
----
+## Results Snapshot
+LoRA-based methods consistently produced the strongest empirical results across the Bengali and Telugu experiments conducted in the paper.
 
-## 📊 Results
-**LoRA-based** approaches consistently produced the **lowest WER** on Bengali/Telugu languages in our experiments.
-<img width="1367" height="318" alt="image" src="https://github.com/user-attachments/assets/04548136-6b82-4142-b201-7e913ccd7c68" />
+<img width="1367" height="318" alt="Comparative results across PEFT methods" src="https://github.com/user-attachments/assets/04548136-6b82-4142-b201-7e913ccd7c68" />
 
----
+## Quickstart
+Install the core dependencies:
 
-## 🚀 Quickstart (Using our CLI Pipeline for fine-tuning any low resource language)
-**Requirements**
 ```bash
-# Create & activate env
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -U pip
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# Linux/macOS: source .venv/bin/activate
 
-# Core deps
-pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121   # pick CUDA/CPU as needed
+pip install -U pip
+pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu121
 pip install transformers datasets accelerate peft evaluate jiwer soundfile librosa tensorboard
 ```
 
-
-### Download the pipeline file to your project root: (lora_finetuning_pipeline.py)
-
-Run below CLI command from file location -
+Run the CLI pipeline from the project root:
 
 ```bash
 python lora_finetuning_pipeline.py \
@@ -70,79 +59,68 @@ python lora_finetuning_pipeline.py \
   --language bengali \
   --username imonghose \
   --model_size small \
-  --output_dir ./finetuned_whisper_bengali \
-  --logging_dir ./tensorboard_logs \
+  --output_dir ./model-tensors/finetuned_whisper_bengali \
+  --logging_dir ./tensorboard/lora-tensorboard \
   --train_frac 0.25 \
   --test_frac 0.75
 ```
 
---dataset, --language, --username, --output_dir, --train_frac, --test_frac are fully customizable.
+Key arguments such as `--dataset`, `--language`, `--username`, `--output_dir`, `--train_frac`, and `--test_frac` are fully configurable. The resulting adapter is saved locally under `--output_dir` and can also be pushed to the Hugging Face Hub.
 
-Your custom fine-tuned model is pushed to your hugging face and saved under folder specified under --output_dir
+## Inference Example
+```python
+AUDIO_FILE = "audio_samples/bengali-convo-2.wav"
 
-Use a GPU for training: torch.cuda.is_available() should be True.
-
-
-## ▶️ Using the Fine-Tuned Model (Inference)
-
-```bash
-# ----------- Load Audio File --------------
-AUDIO_FILE = "bengali-convo-2.wav"  # replace with your file
-
-# Preview audio
-ipd.Audio(AUDIO_FILE)
-
-# Load audio
 waveform, sr = torchaudio.load(AUDIO_FILE)
-waveform = waveform[0].numpy()  # mono
+waveform = waveform[0].numpy()
 resampled = librosa.resample(waveform, orig_sr=sr, target_sr=16000)
-sr = 16000  # Whisper expects 16kHz
-
-
-# -------------------Set model and tokenizer properties-----------------------------------
+sr = 16000
 
 model_name_or_path = "openai/whisper-small"
 language = "bengali"
 task = "transcribe"
 
-# -------------------Load Whisper tokenizer-----------------------------------
+tokenizer = WhisperTokenizer.from_pretrained(
+    model_name_or_path,
+    language=language,
+    task=task,
+)
 
-from transformers import WhisperTokenizer
-tokenizer = WhisperTokenizer.from_pretrained(model_name_or_path,language=language,task=task)
+config = LoraConfig(
+    r=32,
+    lora_alpha=64,
+    target_modules=["k_proj", "v_proj", "q_proj", "out_proj"],
+    lora_dropout=0.05,
+    bias="none",
+)
 
-#---------------------------------Load LORA model from Hugging Face Hub-----------------------------------
-
-from peft import LoraConfig, PeftModel, LoraModel, LoraConfig, get_peft_model
-config = LoraConfig(r=32, lora_alpha=64, target_modules=["k_proj", "v_proj", "q_proj", "out_proj"], lora_dropout=0.05, bias="none")
-
-# Load base model
 base_model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-small")
 peft_model = get_peft_model(base_model, config)
+fine_tuned_model = PeftModel.from_pretrained(
+    peft_model,
+    "imonghose/whisper-small-bengali-lora-final",
+).to("cuda")
 
-# Load LoRA adapter
-# Note : Replace our model with your own fine-tuned model if you use our CLI piepline to create one
-fine_tuned_model = PeftModel.from_pretrained(peft_model, "imonghose/whisper-small-bengali-lora-final")
+processor = WhisperProcessor.from_pretrained(
+    model_name_or_path,
+    language=language,
+    task=task,
+)
 
-# Move model to GPU
-fine_tuned_model = fine_tuned_model.to("cuda")
+inputs = processor(
+    resampled,
+    sampling_rate=sr,
+    return_tensors="pt",
+).input_features.to("cuda")
 
-# ----------- Create Transciption from Audio using the fine-tuned whisper model --------------
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-processor = WhisperProcessor.from_pretrained(model_name_or_path, language=language, task=task)
-model = fine_tuned_model
-# Prepare input
-inputs = processor(resampled, sampling_rate=sr, return_tensors="pt").input_features.to(device)
-# Generate token ids
 with torch.no_grad():
-    op = model.generate(inputs, language='bengali', task='transcribe')
-transcription = tokenizer.batch_decode(op, skip_special_tokens=True)[0]
-print("Full Transcription:")
-print(transcription)
+    generated = fine_tuned_model.generate(inputs, language="bengali", task="transcribe")
 
+transcription = tokenizer.batch_decode(generated, skip_special_tokens=True)[0]
+print(transcription)
 ```
 
-## 🔭 Future Scope
-- Replacing CLI pipeline with an easy-to-use public UI for fine tuning for any low resource language
-- Speech diarization on top of the fine-tuned models
-- Multimodal & real-time ASR extensions (streaming)
+## Future Directions
+- Integrating speaker diarization with fine-tuned Whisper for multi-speaker transcription.
+- Building a modular user-facing interface for dataset upload, training, and inference.
+- Extending the pipeline toward dialect adaptation, larger datasets, and real-time or multimodal ASR workflows.

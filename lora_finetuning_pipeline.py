@@ -112,14 +112,15 @@ def main():
     parser.add_argument("--dataset", type=str, required=True, help="HuggingFace dataset path")
     parser.add_argument("--language", type=str, required=True, help="Language for fine-tuning")
     parser.add_argument("--username", type=str, required=True, help="Your Hugging Face username")
-    parser.add_argument("--output_dir", type=str, default="./whisper-finetuned")
+    parser.add_argument("--output_dir", type=str, default="./model-tensors/whisper-finetuned")
     parser.add_argument("--train_frac", type=float, default=0.1)
     parser.add_argument("--test_frac", type=float, default=0.4)
     parser.add_argument("--model_size", type=str, default="small")
-    parser.add_argument("--logging_dir", type=str, default="./logs")
+    parser.add_argument("--logging_dir", type=str, default="./tensorboard/lora-tensorboard")
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    checkpoint_dir = os.path.join(os.path.dirname(args.output_dir), "lora-checkpoints")
 
     model_id = f"openai/whisper-{args.model_size}"
     processor = WhisperProcessor.from_pretrained(model_id, language=args.language, task="transcribe")
@@ -144,7 +145,7 @@ def main():
 
 
     training_args = Seq2SeqTrainingArguments(
-        output_dir="lora-checkpoints",
+        output_dir=checkpoint_dir,
         per_device_train_batch_size=2,  # Reduced from 8 to 2
         per_device_eval_batch_size=2,  # Reduced from 8 to 2
         gradient_accumulation_steps=2,  # Helps with small batch size
@@ -175,7 +176,7 @@ def main():
         adam_epsilon=1e-8,   # Epsilon for numerical stability
         max_grad_norm=1.0,   # Gradient clipping
         # TensorBoard logging
-        logging_dir="./lora-tensorboard",  # Directory for TensorBoard logs
+        logging_dir=args.logging_dir,  # Directory for TensorBoard logs
         report_to="tensorboard",  # Enables logging to TensorBoard
     )
 
