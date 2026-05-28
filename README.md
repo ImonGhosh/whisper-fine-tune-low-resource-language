@@ -28,13 +28,22 @@
 
 ---
 
+## ✨ Fine-tuning Workflow
+<img width="865" height="497" alt="image" src="https://github.com/user-attachments/assets/ae0efb67-4eb6-48e8-97ee-a10902b93936" />
+
+---
+
 ## 🧠 Methods Compared
 - **LoRA** (rank-limited adapters on attention/MLP)
 - **LoRA + SpecAugment** (time/freq masking for robustness)
 - **BitFit** (bias-only tuning)
 - **Adapter Layers** (bottleneck adapters inserted into blocks)
+- 
+---
 
-> Conclusion: **LoRA-based** approaches consistently produced the **lowest WER** on Bengali/Telugu in our experiments.
+## 📊 Results
+**LoRA-based** approaches consistently produced the **lowest WER** on Bengali/Telugu languages in our experiments.
+<img width="1367" height="318" alt="image" src="https://github.com/user-attachments/assets/04548136-6b82-4142-b201-7e913ccd7c68" />
 
 ---
 
